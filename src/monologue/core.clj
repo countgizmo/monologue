@@ -1,5 +1,6 @@
 (ns monologue.core
-  (:require [clojure.string :as string]
+  (:require [clojure.java.io :as io]
+            [clojure.string :as string]
             [clojure.tools.cli :refer [parse-opts]])
   (:import [java.time LocalDate]
            [java.time.format DateTimeFormatter])
@@ -47,7 +48,11 @@
       :else                                      {:message (usage summary)})))
 
 (defn add-thought
-  [opts])
+  [{:keys [thoughts]}]
+  (let [new-thought-file (str thoughts "/" (today-date) ".txt")]
+    (io/make-parents new-thought-file)
+    (spit new-thought-file "")
+    new-thought-file))
 
 (defn generate-site
   [opts])
@@ -58,7 +63,8 @@
       (do (println message)
           (System/exit 1))
       (case action
-        "add"      (add-thought options)
+        "add"      (->> (add-thought options)
+                        (println "new thought: "))
         "generate" (generate-site options)))))
 
 (comment
@@ -66,6 +72,7 @@
   (parse-args ["-tsomewhere" "-ssomewhereelse"  "add"])
 
   (parse-args ["generate" "--thoughts=blah" "--site=megalbah"])
+
 
 
   )
