@@ -1,3 +1,4 @@
-{:deps  {org.clojure/clojure   {:mvn/version "1.10.1"}
+{:deps  {hiccup                {:mvn/version "1.0.5"}
+         org.clojure/clojure   {:mvn/version "1.10.1"}
          org.clojure/tools.cli {:mvn/version "1.0.194"}}
  :paths ["src" "resources"]}
