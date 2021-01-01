@@ -7,7 +7,6 @@
            [java.time.format DateTimeFormatter])
   (:gen-class))
 
-
 (def input-fmt (DateTimeFormatter/ofPattern "yyyyMMdd"))
 (def output-fmt (DateTimeFormatter/ofPattern "dd MMM, yyyy"))
 
@@ -115,9 +114,21 @@
         posts-by-year     (group-by #(.getYear (key %)) posts)]
     (doseq [[year posts] posts-by-year]
       (generate-page-with-posts posts (str site "/" year ".html") ->post))
-    (generate-page-with-posts (map #(str % ".html") (keys posts-by-year))
+    (generate-page-with-posts (map #(str % ".html")
+                                   (sort #(compare %2 %1)
+                                         (keys posts-by-year)))
                               archive-file-name
                               ->archive-entry)))
+
+(defn copy-images!
+  [src dest]
+  (doseq [f (.listFiles (io/file src))]
+    (let [file-name  (.getName f)
+          img-output (str dest "/" file-name)]
+      (when (.isFile f)
+        (io/make-parents img-output)
+        (io/copy (io/file (str src "/" file-name))
+                 (io/file img-output))))))
 
 (defn generate-site
   "Generates the website by using the template.html found in the resources
@@ -126,12 +137,16 @@
   If there's an img directory in the thoughts location, that directory is moved
   to the site direcoty."
   [{:keys [thoughts site]}]
-  (let [posts             (->> (file-seq (io/file thoughts))
-                               (filter #(.isFile %))
-                               (map (fn [f] {(thought-title->date(.getName f)) f}))
+  (let [posts             (->> (.listFiles (io/file thoughts))
+                               (filter #(and (.isFile %)
+                                            (string/ends-with? (.getName %)
+                                                             ".txt")))
+                               (map (fn [f]
+                                      {(thought-title->date(.getName f)) f}))
                                (into (sorted-map)))]
     (generate-index-page posts site)
-    (generate-archive-page posts site)))
+    (generate-archive-page posts site)
+    (copy-images! (str thoughts "/img") (str site "/img"))))
 
 (defn -main [& args]
   (let [{:keys [message action options]} (parse-args args)]
