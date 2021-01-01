@@ -111,7 +111,7 @@
 (defn generate-archive-page
   [posts site]
   (let [archive-file-name  (str site "/archive.html")
-        posts-by-year     (group-by #(.getYear (key %)) posts)]
+        posts-by-year      (group-by #(.getYear (key %)) posts)]
     (doseq [[year posts] posts-by-year]
       (generate-page-with-posts posts (str site "/" year ".html") ->post))
     (generate-page-with-posts (map #(str % ".html")
@@ -142,7 +142,7 @@
                                             (string/ends-with? (.getName %)
                                                              ".txt")))
                                (map (fn [f]
-                                      {(thought-title->date(.getName f)) f}))
+                                      {(thought-title->date (.getName f)) f}))
                                (into (sorted-map)))]
     (generate-index-page posts site)
     (generate-archive-page posts site)
@@ -162,11 +162,10 @@
 
   (parse-args ["-tsomewhere" "-ssomewhereelse"  "add"])
 
-  (parse-args ["generate" "--thoughts=blah" ])
+  (parse-args ["generate" "--thoughts=blah"])
 
 
   (generate-site {:thoughts "../countgizmo.github.io/thoughts"
                   :site "../countgizmo.github.io/site"})
 
 
-  )
