@@ -166,6 +166,6 @@
 
 
   (generate-site {:thoughts "../countgizmo.github.io/thoughts"
-                  :site "../countgizmo.github.io/site"})
+                  :site "../countgizmo.github.io/site"}))
 
 
