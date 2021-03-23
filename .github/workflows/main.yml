@@ -27,4 +27,6 @@ jobs:
       - uses: actions/checkout@v2
       - with:
           repository: countgizmo/monologue
+          
+      - name: "Doing stuff"
         run: ls -lsh
