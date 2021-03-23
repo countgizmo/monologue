@@ -21,7 +21,8 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: "Clone monologue"
-      - uses: actions/checkout@master
-      - with:
+        uses: actions/checkout@master
+        with:
           repository: countgizmo/monologue
-      - run: ls -lsh
+      - name: "Looking for something"
+        run: ls -lsh
