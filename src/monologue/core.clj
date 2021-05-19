@@ -10,7 +10,6 @@
 (def input-fmt (DateTimeFormatter/ofPattern "yyyyMMdd"))
 (def output-fmt (DateTimeFormatter/ofPattern "dd MMM, yyyy"))
 
-
 (defn today-date
   "Returns today's date in file-name friendly format.
   The date is local date."
