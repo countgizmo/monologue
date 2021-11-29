@@ -87,7 +87,7 @@
    {:class "archive-entry"}
    [:a {:href file-name} file-name]])
 
-(defn generate-page-with-posts
+(defn generate-page-with-posts!
   [posts page-file-name post-fn]
   (io/make-parents page-file-name)
   (with-open [index-file (io/writer page-file-name :encoding "UTF-8")]
@@ -105,15 +105,15 @@
   [posts site]
   (let [latest          (take 10 (reverse posts))
         index-file-name (str site "/index.html")]
-    (generate-page-with-posts latest index-file-name ->post)))
+    (generate-page-with-posts! latest index-file-name ->post)))
 
 (defn generate-archive-page
   [posts site]
   (let [archive-file-name  (str site "/archive.html")
         posts-by-year      (group-by #(.getYear (key %)) posts)]
     (doseq [[year posts] posts-by-year]
-      (generate-page-with-posts posts (str site "/" year ".html") ->post))
-    (generate-page-with-posts (map #(str % ".html")
+      (generate-page-with-posts! posts (str site "/" year ".html") ->post))
+    (generate-page-with-posts! (map #(str % ".html")
                                    (sort #(compare %2 %1)
                                          (keys posts-by-year)))
                               archive-file-name
@@ -138,8 +138,8 @@
   [{:keys [thoughts site]}]
   (let [posts             (->> (.listFiles (io/file thoughts))
                                (filter #(and (.isFile %)
-                                            (string/ends-with? (.getName %)
-                                                             ".txt")))
+                                             (string/ends-with? (.getName %)
+                                                                ".txt")))
                                (map (fn [f]
                                       {(thought-title->date (.getName f)) f}))
                                (into (sorted-map)))]
